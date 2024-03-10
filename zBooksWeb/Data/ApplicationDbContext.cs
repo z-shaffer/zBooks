@@ -10,7 +10,7 @@ public class ApplicationDbContext : DbContext
         
     }
 
-    public DbSet<Category> CategoriesType { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
