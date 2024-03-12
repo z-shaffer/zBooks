@@ -22,6 +22,8 @@ public class CategoryController(ApplicationDbContext db) : Controller
     [HttpPost]
     public IActionResult Create(Category obj)
     {
-        return View();
+        _db.Categories.Add(obj);
+        _db.SaveChanges();
+        return RedirectToAction("Index");
     }
 }
