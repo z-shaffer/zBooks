@@ -12,7 +12,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
     public IActionResult Index()
     {
         // Update the category list
-        List<Category> objCategoryList = _db.Categories.ToList();
+        var objCategoryList = _db.Categories.ToList();
         return View(objCategoryList);
     }
 
@@ -29,7 +29,8 @@ public class CategoryController(ApplicationDbContext db) : Controller
         if (!ModelState.IsValid) return View(obj);
         // Add the valid model, save the db, and then re-generate the category list
         _db.Categories.Add(obj);
-        _db.SaveChanges(); 
+        _db.SaveChanges();
+        TempData["success"] = "Category created";
         return RedirectToAction("Index");
     }
     
@@ -48,6 +49,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         if (!ModelState.IsValid) return View(obj);
         _db.Categories.Update(obj);
         _db.SaveChanges(); 
+        TempData["success"] = "Category updated";
         return RedirectToAction("Index");
     }
     
@@ -68,6 +70,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         if (!ModelState.IsValid) return View(obj);
         _db.Categories.Remove(obj);
         _db.SaveChanges(); 
+        TempData["success"] = "Category deleted";
         return RedirectToAction("Index");
     }
 }
