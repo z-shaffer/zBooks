@@ -18,4 +18,10 @@ public class CategoryController(ApplicationDbContext db) : Controller
     {
         return View();
     }
+    
+    [HttpPost]
+    public IActionResult Create(Category obj)
+    {
+        return View();
+    }
 }
