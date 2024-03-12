@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using zBooksWeb.Data;
 using zBooksWeb.Models;
 
@@ -10,6 +11,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
 
     public IActionResult Index()
     {
+        // Update the category list
         List<Category> objCategoryList = _db.Categories.ToList();
         return View(objCategoryList);
     }
@@ -22,8 +24,28 @@ public class CategoryController(ApplicationDbContext db) : Controller
     [HttpPost]
     public IActionResult Create(Category obj)
     {
+        // Return the view when receiving an invalid model
+        if (!ModelState.IsValid) return View(obj);
+        // Add the valid model, save the db, and then re-generate the category list
         _db.Categories.Add(obj);
-        _db.SaveChanges();
+        _db.SaveChanges(); 
+        return RedirectToAction("Index");
+    }
+    
+    public IActionResult Edit(int? id)
+    {
+        if (id is null or 0) return NotFound();
+        var categoryFromDb = _db.Categories.Find(id);
+        if (categoryFromDb is null) return NotFound();
+        return View(categoryFromDb);
+    }
+    
+    [HttpPost]
+    public IActionResult Edit(Category obj)
+    {
+        if (!ModelState.IsValid) return View(obj);
+        _db.Categories.Add(obj);
+        _db.SaveChanges(); 
         return RedirectToAction("Index");
     }
 }

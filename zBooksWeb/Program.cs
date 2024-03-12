@@ -3,6 +3,7 @@ using zBooksWeb.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Db connection stored as dotnet secret "DefaultConnection"
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Add services to the container.
