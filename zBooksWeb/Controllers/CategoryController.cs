@@ -16,6 +16,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         return View(objCategoryList);
     }
 
+    [HttpGet]
     public IActionResult Create()
     {
         return View();
@@ -32,6 +33,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         return RedirectToAction("Index");
     }
     
+    [HttpGet]
     public IActionResult Edit(int? id)
     {
         if (id is null or 0) return NotFound();
@@ -44,7 +46,27 @@ public class CategoryController(ApplicationDbContext db) : Controller
     public IActionResult Edit(Category obj)
     {
         if (!ModelState.IsValid) return View(obj);
-        _db.Categories.Add(obj);
+        _db.Categories.Update(obj);
+        _db.SaveChanges(); 
+        return RedirectToAction("Index");
+    }
+    
+    [HttpGet]
+    public IActionResult Delete(int? id)
+    {
+        if (id is null or 0) return NotFound();
+        var categoryFromDb = _db.Categories.Find(id);
+        if (categoryFromDb is null) return NotFound();
+        return View(categoryFromDb);
+    }
+    
+    [HttpPost, ActionName("Delete")]
+    public IActionResult DeletePost(int? id)
+    {
+        var obj = _db.Categories.Find(id);
+        if (obj is null) return NotFound();
+        if (!ModelState.IsValid) return View(obj);
+        _db.Categories.Remove(obj);
         _db.SaveChanges(); 
         return RedirectToAction("Index");
     }
