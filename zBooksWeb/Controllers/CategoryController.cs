@@ -30,7 +30,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         // Add the valid model, save the db, and then re-generate the category list
         _db.Categories.Add(obj);
         _db.SaveChanges();
-        TempData["success"] = "Category created";
+        TempData["success"] = "Success: Category created";
         return RedirectToAction("Index");
     }
     
@@ -49,7 +49,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         if (!ModelState.IsValid) return View(obj);
         _db.Categories.Update(obj);
         _db.SaveChanges(); 
-        TempData["success"] = "Category updated";
+        TempData["success"] = "Success: Category updated";
         return RedirectToAction("Index");
     }
     
@@ -70,7 +70,7 @@ public class CategoryController(ApplicationDbContext db) : Controller
         if (!ModelState.IsValid) return View(obj);
         _db.Categories.Remove(obj);
         _db.SaveChanges(); 
-        TempData["success"] = "Category deleted";
+        TempData["success"] = "Success: Category deleted";
         return RedirectToAction("Index");
     }
 }
