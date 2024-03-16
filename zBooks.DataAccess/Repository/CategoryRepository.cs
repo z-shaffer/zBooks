@@ -10,11 +10,11 @@ public class CategoryRepository(ApplicationDbContext db) : Repository<Category>(
 
     public void Update(Category obj)
     {
-        _db.SaveChanges();
+        _db.Categories.Update(obj);
     }
 
     public void Save()
     {
-        _db.Categories.Update(obj);
+        _db.SaveChanges();
     }
 }
