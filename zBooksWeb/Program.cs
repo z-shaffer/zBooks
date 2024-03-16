@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using zBooksWeb.Data;
+using zBooks.DataAccess.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

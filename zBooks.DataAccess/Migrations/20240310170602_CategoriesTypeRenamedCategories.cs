@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace zBooksWeb.Migrations
+namespace zBooks.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class CategoriesTypeRenamedCategories : Migration

@@ -16,4 +16,9 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\zBooks.DataAccess\zBooks.DataAccess.csproj" />
+      <ProjectReference Include="..\zBooks.Models\zBooks.Models.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-namespace zBooksWeb.Models;
+namespace zBooks.Models;
 
 public class ErrorViewModel
 {

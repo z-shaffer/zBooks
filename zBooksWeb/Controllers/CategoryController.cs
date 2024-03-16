@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using zBooksWeb.Data;
-using zBooksWeb.Models;
+using zBooks.DataAccess.Data;
+using zBooks.Models;
 
 namespace zBooksWeb.Controllers;
 

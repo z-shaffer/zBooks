@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using zBooksWeb.Data;
+using zBooks.DataAccess.Data;
 
 #nullable disable
 
-namespace zBooksWeb.Migrations
+namespace zBooks.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240309102025_SeedCategoryTable")]

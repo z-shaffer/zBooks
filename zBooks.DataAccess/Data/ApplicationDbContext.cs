@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using zBooksWeb.Models;
+using zBooks.Models;
 
-namespace zBooksWeb.Data;
+namespace zBooks.DataAccess.Data;
 
 public class ApplicationDbContext : DbContext
 {
