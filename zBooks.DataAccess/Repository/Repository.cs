@@ -8,7 +8,7 @@ namespace zBooks.DataAccess.Repository;
 public class Repository<T> : IRepository<T> where T : class
 {
     private readonly ApplicationDbContext _db;
-    internal DbSet<T> dbSet;
+    private DbSet<T> dbSet;
 
     public Repository(ApplicationDbContext db)
     {
@@ -37,11 +37,11 @@ public class Repository<T> : IRepository<T> where T : class
 
     public void Remove(T entity)
     {
-        throw new NotImplementedException();
+        dbSet.Remove(entity);
     }
 
     public void RemoveRange(IEnumerable<T> entity)
     {
-        throw new NotImplementedException();
+        dbSet.RemoveRange(entity);
     }
 }
