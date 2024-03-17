@@ -6,14 +6,14 @@ using zBooks.Models;
 
 namespace zBooksWeb.Controllers;
 
-public class CategoryController(ICategoryRepository db) : Controller
+public class CategoryController(IUnitOfWork unitOfWork) : Controller
 {
-    private readonly ICategoryRepository _categoryRepo = db;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     
     public IActionResult Index()
     {
         // Update the category list
-        var objCategoryList = _categoryRepo.GetAll().ToList();
+        var objCategoryList = _unitOfWork.Category.GetAll().ToList();
         return View(objCategoryList);
     }
 
@@ -29,8 +29,8 @@ public class CategoryController(ICategoryRepository db) : Controller
         // Return the view when receiving an invalid model
         if (!ModelState.IsValid) return View(obj);
         // Add the valid model, save the db, and then re-generate the category list
-        _categoryRepo.Add(obj);
-        _categoryRepo.Save();
+        _unitOfWork.Category.Add(obj);
+        _unitOfWork.Save();
         TempData["success"] = "Success: Category created";
         return RedirectToAction("Index");
     }
@@ -39,7 +39,7 @@ public class CategoryController(ICategoryRepository db) : Controller
     public IActionResult Edit(int? id)
     {
         if (id is null or 0) return NotFound();
-        var categoryFromDb = _categoryRepo.Get(u=> u.Id == id);
+        var categoryFromDb = _unitOfWork.Category.Get(u=> u.Id == id);
         return View(categoryFromDb);
     }
     
@@ -47,8 +47,8 @@ public class CategoryController(ICategoryRepository db) : Controller
     public IActionResult Edit(Category obj)
     {
         if (!ModelState.IsValid) return View(obj);
-        _categoryRepo.Update(obj);
-        _categoryRepo.Save();
+        _unitOfWork.Category.Update(obj);
+        _unitOfWork.Save();
         TempData["success"] = "Success: Category updated";
         return RedirectToAction("Index");
     }
@@ -57,17 +57,17 @@ public class CategoryController(ICategoryRepository db) : Controller
     public IActionResult Delete(int? id)
     {
         if (id is null or 0) return NotFound();
-        var categoryFromDb = _categoryRepo.Get(u=> u.Id == id);
+        var categoryFromDb = _unitOfWork.Category.Get(u=> u.Id == id);
         return View(categoryFromDb);
     }
     
     [HttpPost, ActionName("Delete")]
     public IActionResult DeletePost(int? id)
     {
-        var obj = _categoryRepo.Get(u=> u.Id == id);
+        var obj = _unitOfWork.Category.Get(u=> u.Id == id);
         if (!ModelState.IsValid) return View(obj);
-        _categoryRepo.Remove(obj);
-        _categoryRepo.Save(); 
+        _unitOfWork.Category.Remove(obj);
+        _unitOfWork.Save(); 
         TempData["success"] = "Success: Category deleted";
         return RedirectToAction("Index");
     }
