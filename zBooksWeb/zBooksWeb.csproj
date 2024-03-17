@@ -14,11 +14,18 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\zBooks.DataAccess\zBooks.DataAccess.csproj" />
       <ProjectReference Include="..\zBooks.Models\zBooks.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Areas\Admin\Views\" />
+      <Folder Include="Areas\Customer\Views\" />
+      <Folder Include="Controllers\" />
     </ItemGroup>
 
 </Project>
