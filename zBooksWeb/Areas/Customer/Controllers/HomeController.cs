@@ -2,12 +2,13 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using zBooks.Models;
 
-namespace zBooksWeb.Controllers;
+namespace zBooksWeb.Areas.Customer.Controllers;
 
+[Area("Customer")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-
+    
     public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;

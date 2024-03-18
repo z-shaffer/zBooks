@@ -4,8 +4,9 @@ using zBooks.DataAccess.Data;
 using zBooks.DataAccess.Repository.IRepository;
 using zBooks.Models;
 
-namespace zBooksWeb.Controllers;
+namespace zBooksWeb.Areas.Admin.Controllers;
 
+[Area("Admin")]
 public class CategoryController(IUnitOfWork unitOfWork) : Controller
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
