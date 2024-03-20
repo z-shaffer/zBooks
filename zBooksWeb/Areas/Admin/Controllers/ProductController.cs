@@ -9,10 +9,10 @@ using zBooks.Models.ViewModels;
 namespace zBooksWeb.Areas.Admin.Controllers;
 
 [Area("Admin")]
-public class ProductController(IUnitOfWork unitOfWork) : Controller
+public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment) : Controller
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    
+    private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
     public IActionResult Index()
     {
         // Update the product list
@@ -53,6 +53,18 @@ public class ProductController(IUnitOfWork unitOfWork) : Controller
             return View(productVm);
         }
         // Add the valid model, save the db, and then re-generate the product list
+        var wwwRootPath = _webHostEnvironment.WebRootPath;
+        if (file is not null)
+        {
+            char separator = Path.DirectorySeparatorChar;
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var productPath = Path.Combine(wwwRootPath, @"images" + separator + "product");
+            using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+            productVm.Product.ImageUrl = @separator + "images" + separator + "product" + separator + fileName;
+        }
         _unitOfWork.Product.Add(productVm.Product);
         _unitOfWork.Save();
         TempData["success"] = "Success: Product created";
