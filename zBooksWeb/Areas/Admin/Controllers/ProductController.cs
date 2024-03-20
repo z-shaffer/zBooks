@@ -16,7 +16,7 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
     public IActionResult Index()
     {
         // Update the product list
-        var objProductList = _unitOfWork.Product.GetAll().ToList();
+        var objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
         return View(objProductList);
     }
 
