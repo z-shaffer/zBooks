@@ -59,13 +59,27 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
             char separator = Path.DirectorySeparatorChar;
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var productPath = Path.Combine(wwwRootPath, @"images" + separator + "product");
+            // If image already exists, delete it
+            if (!string.IsNullOrEmpty(productVm.Product.ImageUrl))
+            {
+                var oldImagePath = Path.Combine(wwwRootPath, productVm.Product.ImageUrl.TrimStart(separator));
+                if (System.IO.File.Exists(oldImagePath)) System.IO.File.Delete(oldImagePath);
+            }
             using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
             {
                 file.CopyTo(fileStream);
             }
             productVm.Product.ImageUrl = @separator + "images" + separator + "product" + separator + fileName;
+            // Check if the view model exists (needs update) or needs added
+            if (productVm.Product.Id == 0)
+            {
+                _unitOfWork.Product.Add(productVm.Product);
+            }
+            else
+            {
+                _unitOfWork.Product.Update(productVm.Product);
+            }
         }
-        _unitOfWork.Product.Add(productVm.Product);
         _unitOfWork.Save();
         TempData["success"] = "Success: Product created";
         return RedirectToAction("Index");
