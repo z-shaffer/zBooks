@@ -84,23 +84,35 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
         TempData["success"] = "Success: Product created";
         return RedirectToAction("Index");
     }
-    
+
+    #region API CALLS
+
     [HttpGet]
+    public IActionResult GetAll()
+    {
+        List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+        return Json(new { data = objProductList });
+    }
+    
+    [HttpDelete]
     public IActionResult Delete(int? id)
     {
-        if (id is null or 0) return NotFound();
-        var productFromDb = _unitOfWork.Product.Get(u=> u.Id == id);
-        return View(productFromDb);
+        var wwwRootPath = _webHostEnvironment.WebRootPath;
+        char separator = Path.DirectorySeparatorChar;
+        var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
+        // If the product is not found, throw an error
+        if (productToBeDeleted is null)
+        {
+            return Json(new { success = false, message = "Delete Error: Product is null" });
+        }
+        // Otherwise, delete the product's image and the product and update the unit of work
+        var oldImagePath = Path.Combine(wwwRootPath, productToBeDeleted.ImageUrl.TrimStart(separator));
+        if (System.IO.File.Exists(oldImagePath)) System.IO.File.Delete(oldImagePath);
+        _unitOfWork.Product.Remove(productToBeDeleted);
+        _unitOfWork.Save();
+        var objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+        return Json(new { success = true, message = "Success: Product deleted" });
     }
-    
-    [HttpPost, ActionName("Delete")]
-    public IActionResult DeletePost(int? id)
-    {
-        var obj = _unitOfWork.Product.Get(u=> u.Id == id);
-        if (!ModelState.IsValid) return View(obj);
-        _unitOfWork.Product.Remove(obj);
-        _unitOfWork.Save(); 
-        TempData["success"] = "Success: Product deleted";
-        return RedirectToAction("Index");
-    }
+
+    #endregion
 }
