@@ -14,8 +14,14 @@ public class HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWo
 
     public IActionResult Index()
     {
-        IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+        var productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
         return View(productList);
+    }
+    
+    public IActionResult Details(int productId)
+    {
+        var product = _unitOfWork.Product.Get(u=> u.Id == productId, includeProperties: "Category");
+        return View(product);
     }
 
     public IActionResult Privacy()

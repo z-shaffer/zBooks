@@ -7,12 +7,33 @@
             <div class="row p-2">
                 <div class="col-12 p-1">
                     <div class="car border-0 p-3 shadow border-top border-5 rounded">
-                        <img src="@product.ImageUrl" class="card-img-top rounded"/>
+                        <img src="@product.ImageUrl" class="card-img-top rounded" alt="@product.Title cover"/>
                         <div class="card-body pb-0">
                             <div class="pl-1">
                                 <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
                                 <p class="card-title text-warning text-center">by <b>@product.Author</b></p>
                             </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center mb-0">
+                                    Price: 
+                                    <span class="text-decoration-line-through">
+                                        @product.ListPrice.ToString("c")
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center">
+                                    As low as: 
+                                    <span>
+                                        @product.Price100.ToString("c")
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <a asp-action="Details" asp-route-productId="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">
+                                Details
+                            </a>
                         </div>
                     </div>
                 </div>
