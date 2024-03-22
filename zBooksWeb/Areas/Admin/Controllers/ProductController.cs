@@ -65,15 +65,15 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
                 }
 
                 productVm.Product.ImageUrl = separator + "images" + separator + "product" + separator + fileName;
-                // Check if the view model exists (needs update) or needs added
-                if (productVm.Product.Id == 0)
-                {
-                    _unitOfWork.Product.Add(productVm.Product);
-                }
-                else
-                {
-                    _unitOfWork.Product.Update(productVm.Product);
-                }
+            }
+            // Check if the view model exists (needs update) or needs added
+            if (productVm.Product.Id == 0)
+            {
+                _unitOfWork.Product.Add(productVm.Product);
+            }
+            else
+            {
+                _unitOfWork.Product.Update(productVm.Product);
             }
             _unitOfWork.Save();
             TempData["success"] = "Success: Product created";
