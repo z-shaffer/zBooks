@@ -32,9 +32,9 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
             }),
             Product = new Product()
         };
-        // Handles creation
+        // Handles creation of a new product
         if (id is null or 0) return View(productVm);
-        // Handles updating
+        // Handles updating of an existing product
         productVm.Product = _unitOfWork.Product.Get(u => u.Id == id);
         return View(productVm);
     }
@@ -43,46 +43,48 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
     public IActionResult Upsert(ProductVM productVm, IFormFile? file)
     {
         // Return the view when receiving an invalid model
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            productVm.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+            // Add the valid model, save the db, and then re-generate the product list
+            var wwwRootPath = _webHostEnvironment.WebRootPath;
+            if (file is not null)
             {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
-            return View(productVm);
+                var separator = Path.DirectorySeparatorChar;
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var productPath = Path.Combine(wwwRootPath, "images" + separator + "product");
+                // If image already exists, delete it
+                if (!string.IsNullOrEmpty(productVm.Product.ImageUrl))
+                {
+                    var oldImagePath = Path.Combine(wwwRootPath, productVm.Product.ImageUrl.TrimStart(separator));
+                    if (System.IO.File.Exists(oldImagePath)) System.IO.File.Delete(oldImagePath);
+                }
+
+                using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                productVm.Product.ImageUrl = separator + "images" + separator + "product" + separator + fileName;
+                // Check if the view model exists (needs update) or needs added
+                if (productVm.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(productVm.Product);
+                }
+                else
+                {
+                    _unitOfWork.Product.Update(productVm.Product);
+                }
+            }
+            _unitOfWork.Save();
+            TempData["success"] = "Success: Product created";
+            return RedirectToAction("Index");
         }
-        // Add the valid model, save the db, and then re-generate the product list
-        var wwwRootPath = _webHostEnvironment.WebRootPath;
-        if (file is not null)
+        productVm.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
         {
-            char separator = Path.DirectorySeparatorChar;
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var productPath = Path.Combine(wwwRootPath, @"images" + separator + "product");
-            // If image already exists, delete it
-            if (!string.IsNullOrEmpty(productVm.Product.ImageUrl))
-            {
-                var oldImagePath = Path.Combine(wwwRootPath, productVm.Product.ImageUrl.TrimStart(separator));
-                if (System.IO.File.Exists(oldImagePath)) System.IO.File.Delete(oldImagePath);
-            }
-            using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
-            {
-                file.CopyTo(fileStream);
-            }
-            productVm.Product.ImageUrl = @separator + "images" + separator + "product" + separator + fileName;
-            // Check if the view model exists (needs update) or needs added
-            if (productVm.Product.Id == 0)
-            {
-                _unitOfWork.Product.Add(productVm.Product);
-            }
-            else
-            {
-                _unitOfWork.Product.Update(productVm.Product);
-            }
-        }
-        _unitOfWork.Save();
-        TempData["success"] = "Success: Product created";
-        return RedirectToAction("Index");
+            Text = u.Name,
+            Value = u.Id.ToString()
+        });
+        return View(productVm);
     }
 
     #region API CALLS
@@ -98,7 +100,7 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
     public IActionResult Delete(int? id)
     {
         var wwwRootPath = _webHostEnvironment.WebRootPath;
-        char separator = Path.DirectorySeparatorChar;
+        var separator = Path.DirectorySeparatorChar;
         var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
         // If the product is not found, throw an error
         if (productToBeDeleted is null)
