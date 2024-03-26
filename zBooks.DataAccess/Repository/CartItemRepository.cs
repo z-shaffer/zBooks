@@ -9,8 +9,12 @@ public class CartItemRepository(ApplicationDbContext db) : Repository<CartItem>(
 {
     private ApplicationDbContext _db = db;
 
-    public void Update(CartItem item)
+    public void Update(CartItem obj)
     {
-        _db.Entry(item).State = EntityState.Modified;
+        var objFromDb = _db.CartItems.FirstOrDefault(u => u.Id == obj.Id);
+        if (objFromDb is not null)
+        {
+            objFromDb.Quantity = obj.Quantity;
+        }
     }
 }
