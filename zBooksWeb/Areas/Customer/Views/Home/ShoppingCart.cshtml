@@ -1,0 +1,45 @@
+﻿@model ShoppingCart
+
+@{
+    ViewBag.Title = "Shopping Cart";
+}
+
+<h2>Shopping Cart</h2>
+
+@if (Model.CartItems.Count == 0)
+{
+    <p>Your shopping cart is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr>
+                <td>@item.Product.Title</td>
+                <td>@item.Quantity</td>
+                <td>@item.Product.Price.ToString("C")</td>
+                <td>@(item.Quantity * item.Product.Price).ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3"><strong>Total:</strong></td>
+            <td><strong>@Model.CartItems.Sum(item => item.Quantity * item.Product.Price).ToString("C")</strong></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'">Checkout</button>
+    <button class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Home")'">Clear Cart</button>
+}
