@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using zBooks.DataAccess.Repository;
 using zBooks.DataAccess.Repository.IRepository;
 using zBooks.Models;
 
@@ -56,21 +54,12 @@ public class HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWo
             shoppingCart = new ShoppingCart
             {
                 UserId = userId,
-                DateCreated = DateTime.Now
+                DateCreated = DateTime.Now,
+                CartItems = new List<CartItem>()
             };
             _unitOfWork.ShoppingCart.Add(shoppingCart);
             _unitOfWork.Save();
         }
-
-        if (shoppingCart.CartItems is null)
-        {
-            ViewBag.ShoppingCartCount = 0;
-        }
-        else
-        {
-            ViewBag.ShoppingCartCount = shoppingCart.CartItems.Count;
-        }
-
         return shoppingCart;
     }
 }
