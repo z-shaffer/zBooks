@@ -6,18 +6,20 @@ namespace zBooks.DataAccess.Repository;
 
 public class ShoppingCartManager(IUnitOfWork unitOfWork) : IShoppingCartManager
 {
-    public void ScheduleDispose(ShoppingCart shoppingCart)
+    public ShoppingCart TryBuildShoppingCart(string userId)
     {
-        var timer = new System.Threading.Timer((state) =>
+        var shoppingCart = unitOfWork.ShoppingCart.Get(u => u.UserId == userId);
+        if (shoppingCart is null)
         {
-            unitOfWork.ShoppingCart.Remove(shoppingCart);
+            // Create a new shopping cart
+            shoppingCart = new ShoppingCart
+            {
+                UserId = userId,
+                DateCreated = DateTime.Now
+            };
+            unitOfWork.ShoppingCart.Add(shoppingCart);
             unitOfWork.Save();
-        }, null, TimeSpan.FromMinutes(15), TimeSpan.FromMilliseconds(-1));
-    }
-
-    public int GetCartCount(string userId)
-    {
-        var cartCount = unitOfWork.ShoppingCart.Get(u=> u.UserId == userId).CartItems.Count;
-        return cartCount;
+        }
+        return shoppingCart;
     }
 }
