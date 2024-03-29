@@ -10,5 +10,6 @@ public class ShoppingCart
     public string UserId { get; set; }
     [Required]
     public DateTime DateCreated { get; set; }
-    public ICollection<CartItem> CartItems { get; set; }
+
+    public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 }
