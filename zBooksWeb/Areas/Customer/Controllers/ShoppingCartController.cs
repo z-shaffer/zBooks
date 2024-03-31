@@ -9,7 +9,8 @@ namespace zBooksWeb.Areas.Customer.Controllers;
 
 [Area("Customer")]
 [Authorize(Roles = StaticDetails.Role_Customer)]
-public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUnitOfWork unitOfWork, IShoppingCartManager shoppingCartManager) : Controller
+public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUnitOfWork unitOfWork, 
+    IShoppingCartManager shoppingCartManager) : Controller
 {
     private readonly ILogger<ShoppingCartController> _logger = logger;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -18,8 +19,6 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
     public IActionResult Index()
     {
         var shoppingCart = _shoppingCartManager.TryBuildShoppingCart(User.Identity.Name);
-        //_unitOfWork.ShoppingCart.Add(shoppingCart);
-        //_unitOfWork.Save();
         return View(_unitOfWork);
     }
     
@@ -30,15 +29,15 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
         if (cartItem is null)
         {
             _unitOfWork.CartItem.Add(new CartItem { ProductId = productId, Quantity = quantity, CartId = User.Identity.Name });
-            _unitOfWork.Save();
         }
         else
         {
             cartItem.Quantity += quantity;
+            _unitOfWork.CartItem.Update(cartItem);
         }
-        //_unitOfWork.Save();
-        // Redirect to shopping cart view or other appropriate page
-        return RedirectToAction("Index", "ShoppingCart");
+        _unitOfWork.Save();
+        TempData["success"] = "Success: Item added to cart";
+        return RedirectToAction("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
