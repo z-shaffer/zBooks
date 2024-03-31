@@ -31,6 +31,30 @@ public class Repository<T> : IRepository<T> where T : class
         }
         return query.ToList();
     }
+    
+    public IEnumerable<T> FilterAll(Expression<Func<T, bool>> filter =null, 
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderby = null, string? property = "")
+    {
+        IQueryable<T> query = dbSet;
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+        if (property != null)
+        {
+            foreach (var p in property.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(p);
+            }
+        }
+        if(orderby != null)
+        {
+            return orderby(query);
+        }  else
+        {
+            return query.ToList();
+        }
+    }
 
     public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
     {
