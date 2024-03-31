@@ -47,5 +47,23 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
+    #region API CALLS
+    
+    [HttpDelete]
+    public IActionResult Delete(int? id)
+    {
+        var itemToBeDeleted = _unitOfWork.CartItem.Get(u => u.Id == id);
+        // If the product is not found, throw an error
+        if (itemToBeDeleted is null)
+        {
+            return Json(new { success = false, message = "Delete Error: Product is null" });
+        }
+        _unitOfWork.CartItem.Remove(itemToBeDeleted);
+        _unitOfWork.Save();
+        var objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+        return Json(new { success = true, message = "Success: Cart item deleted" });
+    }
+
+    #endregion
     
 }
