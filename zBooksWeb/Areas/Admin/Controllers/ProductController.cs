@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using zBooks.DataAccess.Data;
 using zBooks.DataAccess.Repository.IRepository;
 using zBooks.Models;
 using zBooks.Models.ViewModels;
