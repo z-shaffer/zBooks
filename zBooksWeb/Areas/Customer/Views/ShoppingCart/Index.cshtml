@@ -20,6 +20,7 @@ else
             <th>Quantity</th>
             <th>Price</th>
             <th>Total</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@ else
                 <td>@item.Quantity</td>
                 <td>@product.Price.ToString("C")</td>
                 <td>@price.ToString("C")</td>
+                <td><button class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button></td>
             </tr>
         }
         </tbody>
