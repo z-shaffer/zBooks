@@ -18,32 +18,26 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
     public IActionResult Index()
     {
         var shoppingCart = _shoppingCartManager.TryBuildShoppingCart(User.Identity.Name);
-        return View(shoppingCart);
+        //_unitOfWork.ShoppingCart.Add(shoppingCart);
+        //_unitOfWork.Save();
+        return View(_unitOfWork);
     }
     
     [HttpPost]
-    public IActionResult AddToCart(Product product, int quantity)
+    public IActionResult AddToCart(int productId, int quantity)
     {
-        var cartItems = _unitOfWork.ShoppingCart.Get(u => u.UserId == User.Identity.Name).CartItems;
-        if (cartItems == null)
+        var cartItem = _unitOfWork.CartItem.Get(u => u.CartId == User.Identity.Name && u.ProductId == productId);
+        if (cartItem is null)
         {
-            cartItems = new List<CartItem>();
+            _unitOfWork.CartItem.Add(new CartItem { ProductId = productId, Quantity = quantity, CartId = User.Identity.Name });
+            _unitOfWork.Save();
         }
-        bool productAlreadyInCart = cartItems.Any(item =>
+        else
         {
-            if (item.Product == product)
-            {
-                item.Quantity += quantity;
-                return true;
-            }
-            return false;
-        });
-
-        if (!productAlreadyInCart)
-        {
-            cartItems.Add(new CartItem { Product = product, Quantity = quantity });
+            cartItem.Quantity += quantity;
         }
-
+        //_unitOfWork.Save();
+        // Redirect to shopping cart view or other appropriate page
         return RedirectToAction("Index", "ShoppingCart");
     }
 

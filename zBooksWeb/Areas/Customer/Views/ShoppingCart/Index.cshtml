@@ -1,8 +1,13 @@
-﻿@model ShoppingCart
+﻿@model zBooks.DataAccess.Repository.IRepository.IUnitOfWork
 
+@{
+    var cartItems = Model.CartItem.FilterAll(u => u.CartId == User.Identity.Name);
+    var cartCount = cartItems.Count();
+    var total = 0.0;
+    
+}
 <h2>Shopping Cart</h2>
-
-@if (Model.CartItems.Count == 0)
+@if (cartCount == 0)
 {
     <p>Your shopping cart is empty.</p>
 }
@@ -18,20 +23,23 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model.CartItems)
+        @foreach (var item in cartItems)
         {
+            var product = Model.Product.Get(u => u.Id == item.ProductId);
+            var price = item.Quantity * product.Price;
+            total += price;
             <tr>
-                <td>@item.Product.Title</td>
+                <td>@product.Title</td>
                 <td>@item.Quantity</td>
-                <td>@item.Product.Price.ToString("C")</td>
-                <td>@(item.Quantity * item.Product.Price).ToString("C")</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@price.ToString("C")</td>
             </tr>
         }
         </tbody>
         <tfoot>
         <tr>
             <td colspan="3"><strong>Total:</strong></td>
-            <td><strong>@Model.CartItems.Sum(item => item.Quantity * item.Product.Price).ToString("C")</strong></td>
+            <td><strong>@total.ToString("C")</strong></td>
         </tr>
         </tfoot>
     </table>
