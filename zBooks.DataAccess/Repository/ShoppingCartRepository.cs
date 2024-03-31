@@ -14,7 +14,7 @@ public class ShoppingCartRepository(ApplicationDbContext db) : Repository<Shoppi
         var objFromDb = _db.ShoppingCarts.FirstOrDefault(u => u.Id == obj.Id);
         if (objFromDb is not null)
         {
-            objFromDb.CartItems = obj.CartItems;
+            objFromDb.DateCreated = obj.DateCreated;
         }
     }
 }
