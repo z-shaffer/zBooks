@@ -113,7 +113,6 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
         if (System.IO.File.Exists(oldImagePath)) System.IO.File.Delete(oldImagePath);
         _unitOfWork.Product.Remove(productToBeDeleted);
         _unitOfWork.Save();
-        var objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
         return Json(new { success = true, message = "Success: Product deleted" });
     }
 
