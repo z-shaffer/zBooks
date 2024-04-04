@@ -13,7 +13,7 @@
 }
 else
 {
-    <table class="table">
+    <table id="cart-table" class="table table-bordered table-striped">
         <thead>
         <tr>
             <th>Product</th>
@@ -34,7 +34,7 @@ else
                 <td>@item.Quantity</td>
                 <td>@product.Price.ToString("C")</td>
                 <td>@price.ToString("C")</td>
-                <td><button class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button></td>
+                <td><button type="button" onclick="deleteItem(@item.Id)" class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button></td>
             </tr>
         }
         </tbody>
@@ -45,7 +45,10 @@ else
         </tr>
         </tfoot>
     </table>
+    <button class="btn btn-primary" onclick="">Checkout</button>
+    <button class="btn btn-secondary" onclick="clearCart()">Clear Cart</button>
+}
 
-    <button class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'">Checkout</button>
-    <button class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Home")'">Clear Cart</button>
+@section Scripts {
+    <script src="~/js/cart.js"></script>
 }
