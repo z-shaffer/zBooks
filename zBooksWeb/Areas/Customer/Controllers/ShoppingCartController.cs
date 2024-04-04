@@ -89,6 +89,6 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
 
     public IActionResult Checkout()
     {
-        return View();
+        return View(_unitOfWork);
     }
 }
