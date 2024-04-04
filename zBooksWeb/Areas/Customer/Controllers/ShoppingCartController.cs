@@ -22,6 +22,7 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
         return View(_unitOfWork);
     }
     
+    // Increase the amount of said product in the user's shopping cart by that amount
     [HttpPost]
     public IActionResult AddToCart(int productId, int quantity)
     {
@@ -45,24 +46,49 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-
-    #region API CALLS
     
+    // Delete the provided item based on ID
     [HttpDelete]
     public IActionResult Delete(int? id)
     {
         var itemToBeDeleted = _unitOfWork.CartItem.Get(u => u.Id == id);
-        // If the product is not found, throw an error
-        if (itemToBeDeleted is null)
+        // If the product is found, remove it. Else throw an error
+        if (itemToBeDeleted is not null)
         {
-            return Json(new { success = false, message = "Delete Error: Product is null" });
+            _unitOfWork.CartItem.Remove(itemToBeDeleted);
+            _unitOfWork.Save();
+            TempData["success"] = "Success: Item removed from cart";
         }
-        _unitOfWork.CartItem.Remove(itemToBeDeleted);
-        _unitOfWork.Save();
-        var objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
-        return Json(new { success = true, message = "Success: Cart item deleted" });
+        else
+        {
+            TempData["error"] = "Error: Item not found";
+        }
+        return Json(Url.Action("Index", "ShoppingCart")); 
     }
 
-    #endregion
-    
+    [HttpDelete]
+    public IActionResult ClearCart()
+    {
+        var itemsToBeDeleted = _unitOfWork.CartItem.GetAll().Where(u=>u.CartId == User.Identity.Name);
+        if (itemsToBeDeleted is not null)
+        {
+            foreach (var item in itemsToBeDeleted)
+            {
+                _unitOfWork.CartItem.Remove(item);
+                _unitOfWork.Save();
+                
+            }
+            TempData["success"] = "Success: Cart cleared";
+        }
+        else
+        {
+            TempData["error"] = "Error: Unable to clear cart";
+        }
+        return Json(Url.Action("Index", "ShoppingCart")); 
+    }
+
+    public IActionResult Checkout()
+    {
+        return View();
+    }
 }
