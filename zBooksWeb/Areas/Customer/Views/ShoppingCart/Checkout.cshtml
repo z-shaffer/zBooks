@@ -1,0 +1,54 @@
+﻿@model zBooks.DataAccess.Repository.IRepository.IUnitOfWork
+
+@{
+    var cartItems = Model.CartItem.FilterAll(u => u.CartId == User.Identity.Name);
+    var cartCount = cartItems.Count();
+    var total = 0.0;
+    
+}
+<h2>Shopping Cart</h2>
+@if (cartCount == 0)
+{
+    <p>Your shopping cart is empty.</p>
+}
+else
+{
+    <table id="cart-table" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in cartItems)
+        {
+            var product = Model.Product.Get(u => u.Id == item.ProductId);
+            var price = item.Quantity * product.Price;
+            total += price;
+            <tr>
+                <td>@product.Title</td>
+                <td>@item.Quantity</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@price.ToString("C")</td>
+                <td><button type="button" onclick="deleteItem(@item.Id)" class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button></td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3"><strong>Total:</strong></td>
+            <td><strong>@total.ToString("C")</strong></td>
+        </tr>
+        </tfoot>
+    </table>
+    <button class="btn btn-primary" onclick="">Checkout</button>
+    <button class="btn btn-secondary" onclick="clearCart()">Clear Cart</button>
+}
+
+@section Scripts {
+    <script src="~/js/cart.js"></script>
+}
