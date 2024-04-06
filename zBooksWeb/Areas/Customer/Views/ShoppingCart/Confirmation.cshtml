@@ -1,0 +1,8 @@
+﻿@model zBooks.DataAccess.Repository.IRepository.IUnitOfWork
+
+@{
+    Guid confirmationNumber = Guid.NewGuid();
+    string guidString = confirmationNumber.ToString();
+}
+<h2>Confirmation: @confirmationNumber</h2> 
+<p>Thank you for your purchase! Your order will be delivered in 3-5 business days.</p>
