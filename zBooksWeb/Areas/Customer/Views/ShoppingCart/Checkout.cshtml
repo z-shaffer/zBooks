@@ -1,6 +1,9 @@
 ﻿@model zBooks.DataAccess.Repository.IRepository.IUnitOfWork
 
 @{
+    const string currencyFormat = "c2";
+    const int shippingVal = 5;
+    const int taxVal = 10;
     // Scan the cart again in case items have been changed
     var cartItems = Model.CartItem.FilterAll(u => u.CartId == User.Identity.Name);
     var cartCount = cartItems.Count();
@@ -29,7 +32,21 @@ else
                 <label for="address">Address</label>
                 <input type="text" class="form-control" id="address" name="address" required>
             </div>
-
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="city">City</label>
+                    <input type="text" class="form-control" id="city" name="city" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="state">State</label>
+                    <input type="text" class="form-control" id="state" name="state" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="zip">ZIP Code</label>
+                    <input type="text" class="form-control" id="zip" name="zip" required>
+                </div>
+            </div>
+            
             <hr>
 
             <h3>Payment Information</h3>
@@ -37,45 +54,55 @@ else
                 <label for="cardNumber">Card Number</label>
                 <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="XXXX XXXX XXXX XXXX" required>
             </div>
-            <div class="form-group">
-                <label for="expDate">Expiration Date</label>
-                <input type="text" class="form-control" id="expDate" name="expDate" placeholder="MM/YY" required>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="expDate">Expiration Date</label>
+                    <input type="text" class="form-control" id="expDate" name="expDate" placeholder="MM/YY" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cvv">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="XXX" required>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="cvv">CVV</label>
-                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="xxx" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Process Order</button>
+            <br/>
+            <a class="btn btn-primary" asp-controller="ShoppingCart" asp-action="Confirmation">Process Order</a>
         </div>
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Cart Summary</h5>
+                    <h5 class="card-title"><i class="bi bi-cart4"></i> Summary</h5>
+                    
+                    <hr>
+                    
                     <!-- Display cart items and their prices, shipping cost, tax, etc. -->
                         @foreach (var item in cartItems)
                         {
                             var product = Model.Product.Get(u => u.Id == item.ProductId);
                             var price = item.Quantity * product.Price;
                             total += price;
-                            <tr>
-                                <td>@product.Title</td>
-                                <td>x @item.Quantity</td>
-                                <div class="col-md-4">
-                                    <td>@price.ToString("C")</td>
-                                    <td><button type="button" onclick="deleteItem(@item.Id)" class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button></td>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <span>@product.Title</span>
+                                    <span>x @item.Quantity</span>
                                 </div>
-                            </tr>
+                                <div>
+                                    <span>@price.ToString(currencyFormat)</span>
+                                    <button type="button" onclick="deleteItem(@item.Id)" class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button>
+                                </div>
+                            </div>
                         }
+                    
+                    <hr>
+                    
                     <!-- Display total price, shipping cost, tax, etc. -->
-                    <p>Total: @total.ToString("C")</p>
-                    <p>Shipping: $5.00</p>
-                    <p>Tax: $10.00</p>
+                    <p><b>Total:</b> @total.ToString(currencyFormat)</p>
+                    <p><b>Shipping:</b> @shippingVal.ToString(currencyFormat)</p>
+                    <p><b>Tax:</b> @taxVal.ToString(currencyFormat)</p>
                     <hr>
                     @{
                         total += 15;
                     }
-                    <p><strong>Grand Total: @total.ToString("C")</strong></p>
+                    <p><strong>Grand Total: @total.ToString(currencyFormat)</strong></p>
                 </div>
             </div>
         </div>
@@ -83,5 +110,5 @@ else
 }
 
 @section Scripts {
-    <script src="~/js/cart.js"></script>
+    <script src="~/js/checkout.js"></script>
 }

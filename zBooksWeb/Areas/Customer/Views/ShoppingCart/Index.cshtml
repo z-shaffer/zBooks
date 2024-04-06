@@ -1,12 +1,12 @@
 ﻿@model zBooks.DataAccess.Repository.IRepository.IUnitOfWork
 
 @{
+    const string currencyFormat = "c2";
     var cartItems = Model.CartItem.FilterAll(u => u.CartId == User.Identity.Name);
     var cartCount = cartItems.Count();
     var total = 0.0;
-    
 }
-<h2>Shopping Cart</h2>
+<h2><i class="bi bi-cart4"></i> Shopping Cart</h2>
 @if (cartCount == 0)
 {
     <p>Your shopping cart is empty.</p>
@@ -32,8 +32,8 @@ else
             <tr>
                 <td>@product.Title</td>
                 <td>@item.Quantity</td>
-                <td>@product.Price.ToString("C")</td>
-                <td>@price.ToString("C")</td>
+                <td>@product.Price.ToString(currencyFormat)</td>
+                <td>@price.ToString(currencyFormat)</td>
                 <td><button type="button" onclick="deleteItem(@item.Id)" class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button></td>
             </tr>
         }
@@ -41,12 +41,18 @@ else
         <tfoot>
         <tr>
             <td colspan="3"><strong>Total:</strong></td>
-            <td><strong>@total.ToString("C")</strong></td>
+            <td><strong>@total.ToString(currencyFormat)</strong></td>
         </tr>
         </tfoot>
     </table>
-    <a class="btn btn-primary" asp-controller="ShoppingCart" asp-action="Checkout">Checkout</a>
-    <button class="btn btn-secondary" onclick="clearCart()">Clear Cart</button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <button class="btn btn-primary" onclick="clearCart()">Clear Cart</button>
+        </div>
+        <div>
+            <a class="btn btn-secondary" asp-controller="ShoppingCart" asp-action="Checkout">Checkout <i class="bi bi-arrow-right-square-fill"></i></a>
+        </div>
+    </div>
 }
 
 @section Scripts {
