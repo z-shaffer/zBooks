@@ -22,6 +22,25 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
         return View(_unitOfWork);
     }
     
+    public IActionResult Checkout()
+    {
+        return View(_unitOfWork);
+    }
+
+    public IActionResult Confirmation()
+    {
+        if (ModelState.IsValid)
+        {
+            ClearCart();
+            return View();
+        }
+        else
+        {
+            return RedirectToAction("Index", "Home");
+        }
+        
+    }
+    
     // Increase the amount of said product in the user's shopping cart by that amount
     [HttpPost]
     public IActionResult AddToCart(int productId, int quantity)
@@ -67,7 +86,22 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
     }
 
     [HttpDelete]
-    public IActionResult ClearCart()
+    public IActionResult ClearCartButtonClick()
+    {
+        var isCartClear = ClearCart();
+        if (isCartClear)
+        {
+            TempData["success"] = "Success: Cart cleared";
+        }
+        else
+        {
+            TempData["error"] = "Error: Unable to clear cart";
+        }
+        return Json(Url.Action("Index", "ShoppingCart")); 
+    }
+
+    [HttpDelete]
+    public bool ClearCart()
     {
         var itemsToBeDeleted = _unitOfWork.CartItem.GetAll().Where(u=>u.CartId == User.Identity.Name);
         if (itemsToBeDeleted is not null)
@@ -78,17 +112,12 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
                 _unitOfWork.Save();
                 
             }
-            TempData["success"] = "Success: Cart cleared";
+            return true;
         }
         else
         {
             TempData["error"] = "Error: Unable to clear cart";
+            return false;
         }
-        return Json(Url.Action("Index", "ShoppingCart")); 
-    }
-
-    public IActionResult Checkout()
-    {
-        return View(_unitOfWork);
     }
 }
