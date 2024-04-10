@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zBooks.DataAccess.Repository.IRepository;
 using zBooks.Models;
+using zBooks.Models.ViewModels;
 using zBooks.Utility;
 
 namespace zBooksWeb.Areas.Customer.Controllers;
@@ -15,6 +16,7 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
     private readonly ILogger<ShoppingCartController> _logger = logger;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IShoppingCartManager _shoppingCartManager = shoppingCartManager;
+    private bool _checkoutComplete = false;
 
     public IActionResult Index()
     {
@@ -22,23 +24,50 @@ public class ShoppingCartController(ILogger<ShoppingCartController> logger, IUni
         return View(_unitOfWork);
     }
     
+    [HttpGet]
     public IActionResult Checkout()
     {
-        return View(_unitOfWork);
+        var checkoutVm = new CheckoutVM()
+        {
+            // Check if the cart has changed
+            CartItems = _unitOfWork.CartItem.FilterAll(u => u.CartId == User.Identity.Name),
+            Checkout = new Checkout()
+        };
+        if (checkoutVm.CartItems is not null)
+        {
+            foreach (var item in checkoutVm.CartItems)
+            {
+                item.Product = _unitOfWork.Product.Get(u => u.Id == item.ProductId);
+            }
+            return View(checkoutVm);
+        }
+        return RedirectToAction("Index", "Home");
     }
-
-    public IActionResult Confirmation()
+    
+    [HttpPost]
+    public IActionResult Checkout(CheckoutVM checkoutVm)
     {
         if (ModelState.IsValid)
         {
             ClearCart();
+            _checkoutComplete = true;
+            return RedirectToAction("Confirmation", "ShoppingCart");
+        }
+        checkoutVm.CartItems = _unitOfWork.CartItem.FilterAll(u => u.CartId == User.Identity.Name);
+        foreach (var item in checkoutVm.CartItems)
+        {
+            item.Product = _unitOfWork.Product.Get(u => u.Id == item.ProductId);
+        }
+        return View(checkoutVm);
+    }
+
+    public IActionResult Confirmation()
+    {
+        if (_checkoutComplete)
+        {
             return View();
         }
-        else
-        {
-            return RedirectToAction("Index", "Home");
-        }
-        
+        return RedirectToAction("Index", "ShoppingCart");
     }
     
     // Increase the amount of said product in the user's shopping cart by that amount
