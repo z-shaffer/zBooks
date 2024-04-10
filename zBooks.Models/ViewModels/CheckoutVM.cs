@@ -6,4 +6,6 @@ namespace zBooks.Models.ViewModels;
 public class CheckoutVM
 {
     public Checkout Checkout { get; set; }
+    [ValidateNever]
+    public IEnumerable<CartItem> CartItems { get; set; }
 }
