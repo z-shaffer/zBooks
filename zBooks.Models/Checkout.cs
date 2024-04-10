@@ -49,5 +49,6 @@ public class Checkout
 
     [Required(ErrorMessage = "CVV is required.")]
     [StringLength(3, MinimumLength = 3, ErrorMessage = "CVV must be 3 characters.")]
+    [DisplayName("CVV")]
     public string Cvv { get; set; }
 }
