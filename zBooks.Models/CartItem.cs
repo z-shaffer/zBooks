@@ -15,4 +15,5 @@ public class CartItem
     [Required]
     [ForeignKey("Product")]
     public int ProductId { get; set; }
+    public Product Product { get; set; }
 }
