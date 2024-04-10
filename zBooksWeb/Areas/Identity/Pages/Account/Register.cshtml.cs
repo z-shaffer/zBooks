@@ -169,7 +169,15 @@ namespace zBooksWeb.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, StaticDetails.Role_Customer);
+                        if (_userManager.Users.Any())
+                        {
+                            await _userManager.AddToRoleAsync(user, StaticDetails.Role_Customer);
+                        }
+                        else
+                        {
+                            await _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin);
+                        }
+                        
                     }
                     
                     var userId = await _userManager.GetUserIdAsync(user);
