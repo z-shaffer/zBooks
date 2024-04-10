@@ -1,11 +1,12 @@
-﻿@model zBooks.DataAccess.Repository.IRepository.IUnitOfWork
+﻿@using zBooks.DataAccess.Repository.IRepository
+@model CheckoutVM
 
 @{
     const string currencyFormat = "c2";
     const int shippingVal = 5;
     const int taxVal = 10;
     // Scan the cart again in case items have been changed
-    var cartItems = Model.CartItem.FilterAll(u => u.CartId == User.Identity.Name);
+    var cartItems = @Model.CartItems;
     var cartCount = cartItems.Count();
     var total = 0.0;
 }
@@ -15,7 +16,7 @@
 {
     <p>Your shopping cart is empty.</p>
 }
-else
+/*else
 {
     <div class="row">
         <div class="col-md-8">
@@ -46,7 +47,7 @@ else
                     <input type="text" class="form-control" id="zip" name="zip" required>
                 </div>
             </div>
-            
+
             <hr>
 
             <h3>Payment Information</h3>
@@ -71,9 +72,9 @@ else
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-cart4"></i> Summary</h5>
-                    
+
                     <hr>
-                    
+
                     <!-- Display cart items and their prices, shipping cost, tax, etc. -->
                         @foreach (var item in cartItems)
                         {
@@ -91,9 +92,175 @@ else
                                 </div>
                             </div>
                         }
-                    
+
                     <hr>
-                    
+
+                    <!-- Display total price, shipping cost, tax, etc. -->
+                    <p><b>Total:</b> @total.ToString(currencyFormat)</p>
+                    <p><b>Shipping:</b> @shippingVal.ToString(currencyFormat)</p>
+                    <p><b>Tax:</b> @taxVal.ToString(currencyFormat)</p>
+                    <hr>
+                    @{
+                        total += 15;
+                    }
+                    <p><strong>Grand Total: @total.ToString(currencyFormat)</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+}*/
+else
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card-body">
+                <form method="post" class="row" enctype="multipart/form-data">
+                    <div class="border p-3">
+                        <h3>Billing Information</h3>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Checkout.Name" class="form-control border-0 shadow"/>
+                            <label asp-for="Checkout.Name" class="ms-2"></label>
+                            <span asp-validation-for="Checkout.Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Checkout.Email" class="form-control border-0 shadow"/>
+                            <label asp-for="Checkout.Email" class="ms-2"></label>
+                            <span asp-validation-for="Checkout.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Checkout.Address" class="form-control border-0 shadow"/>
+                            <label asp-for="Checkout.Address" class="ms-2"></label>
+                            <span asp-validation-for="Checkout.Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Checkout.City" class="form-control border-0 shadow"/>
+                            <label asp-for="Checkout.City" class="ms-2"></label>
+                            <span asp-validation-for="Checkout.City" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-floating py-2 col-6">
+                                <select asp-for="Checkout.State" class="form-control border-0 shadow">
+                                    <option value="">-- Select State --</option>
+                                    <option value="AL">AL - Alabama</option>
+                                    <option value="AK">AK - Alaska</option>
+                                    <option value="AZ">AZ - Arizona</option>
+                                    <option value="AR">AR - Arkansas</option>
+                                    <option value="CA">CA - California</option>
+                                    <option value="CO">CO - Colorado</option>
+                                    <option value="CT">CT - Connecticut</option>
+                                    <option value="DE">DE - Delaware</option>
+                                    <option value="FL">FL - Florida</option>
+                                    <option value="GA">GA - Georgia</option>
+                                    <option value="HI">HI - Hawaii</option>
+                                    <option value="ID">ID - Idaho</option>
+                                    <option value="IL">IL - Illinois</option>
+                                    <option value="IN">IN - Indiana</option>
+                                    <option value="IA">IA - Iowa</option>
+                                    <option value="KS">KS - Kansas</option>
+                                    <option value="KY">KY - Kentucky</option>
+                                    <option value="LA">LA - Louisiana</option>
+                                    <option value="ME">ME - Maine</option>
+                                    <option value="MD">MD - Maryland</option>
+                                    <option value="MA">MA - Massachusetts</option>
+                                    <option value="MI">MI - Michigan</option>
+                                    <option value="MN">MN - Minnesota</option>
+                                    <option value="MS">MS - Mississippi</option>
+                                    <option value="MO">MO - Missouri</option>
+                                    <option value="MT">MT - Montana</option>
+                                    <option value="NE">NE - Nebraska</option>
+                                    <option value="NV">NV - Nevada</option>
+                                    <option value="NH">NH - New Hampshire</option>
+                                    <option value="NJ">NJ - New Jersey</option>
+                                    <option value="NM">NM - New Mexico</option>
+                                    <option value="NY">NY - New York</option>
+                                    <option value="NC">NC - North Carolina</option>
+                                    <option value="ND">ND - North Dakota</option>
+                                    <option value="OH">OH - Ohio</option>
+                                    <option value="OK">OK - Oklahoma</option>
+                                    <option value="OR">OR - Oregon</option>
+                                    <option value="PA">PA - Pennsylvania</option>
+                                    <option value="RI">RI - Rhode Island</option>
+                                    <option value="SC">SC - South Carolina</option>
+                                    <option value="SD">SD - South Dakota</option>
+                                    <option value="TN">TN - Tennessee</option>
+                                    <option value="TX">TX - Texas</option>
+                                    <option value="UT">UT - Utah</option>
+                                    <option value="VT">VT - Vermont</option>
+                                    <option value="VA">VA - Virginia</option>
+                                    <option value="WA">WA - Washington</option>
+                                    <option value="WV">WV - West Virginia</option>
+                                    <option value="WI">WI - Wisconsin</option>
+                                    <option value="WY">WY - Wyoming</option>
+                                </select>
+                                <label asp-for="Checkout.State" class="ms-2"></label>
+                                <span asp-validation-for="Checkout.State" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating py-2 col-6">
+                                <input asp-for="Checkout.Zip" class="form-control border-0 shadow"/>
+                                <label asp-for="Checkout.Zip" class="ms-2"></label>
+                                <span asp-validation-for="Checkout.Zip" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <hr/>
+
+                        <h3>Payment Information</h3>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Checkout.CardNumber" class="form-control border-0 shadow"/>
+                            <label asp-for="Checkout.CardNumber" class="ms-2"></label>
+                            <span asp-validation-for="Checkout.CardNumber" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-floating py-2 col-6">
+                                <input asp-for="Checkout.Expiration" class="form-control border-0 shadow"/>
+                                <label asp-for="Checkout.Expiration" class="ms-2"></label>
+                                <span asp-validation-for="Checkout.Expiration" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating py-2 col-6">
+                                <input asp-for="Checkout.Cvv" class="form-control border-0 shadow"/>
+                                <label asp-for="Checkout.Cvv" class="ms-2"></label>
+                                <span asp-validation-for="Checkout.Cvv" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">Process Order</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Category" asp-action="Index" class="btn btn-outline-primary border form-control">Back to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-cart4"></i> Summary</h5>
+
+                    <hr>
+
+                    <!-- Display cart items and their prices, shipping cost, tax, etc. -->
+                    @foreach (var item in cartItems)
+                    {
+                        var product = item.Product;
+                        var price = item.Quantity * product.Price;
+                        total += price;
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span>@product.Title</span>
+                                <span>x @item.Quantity</span>
+                            </div>
+                            <div>
+                                <span>@price.ToString(currencyFormat)</span>
+                                <button type="button" onclick="deleteItem(@item.Id)" class="btn btn-danger delete-btn" data-item-id="@item.Id"><i class="bi bi-trash-fill"></i></button>
+                            </div>
+                        </div>
+                    }
+
+                    <hr>
+
                     <!-- Display total price, shipping cost, tax, etc. -->
                     <p><b>Total:</b> @total.ToString(currencyFormat)</p>
                     <p><b>Shipping:</b> @shippingVal.ToString(currencyFormat)</p>
