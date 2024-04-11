@@ -1,4 +1,14 @@
 # ASP.NET Core (.NET Framework)
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure subscription $(subscriptionId)'
+    appType: 'webAppLinux'
+    WebAppName: 'zBooks'
+    deployToSlotOrASE: true
+    ResourceGroupName: 'RustDetector'
+    SlotName: 'production'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 # Build and test ASP.NET Core projects targeting the full .NET Framework.
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
